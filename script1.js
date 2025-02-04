@@ -98,7 +98,7 @@ fullscreenExit.addEventListener('click', () => {
 
 geoLocationButton.addEventListener('click', () => {
     if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(
+        navigator.geolocation.getCurrentPosition(
             position => {
                 const { latitude, longitude } = position.coords;
                 coordinatesDisplay.textContent = `Latitude: ${latitude.toFixed(5)}, Longitude: ${longitude.toFixed(5)}`;
