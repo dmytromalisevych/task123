@@ -55,13 +55,22 @@ window.addEventListener('beforeunload', saveGalleryToLocalStorage);
 
 addPhotoButton.addEventListener('click', () => {
     fetch('https://dog.ceo/api/breeds/image/random')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             const img = document.createElement('img');
             img.src = data.message;
             img.alt = 'Dog photo';
             gallery.appendChild(img);
             saveGalleryToLocalStorage();
+        })
+        .catch(error => {
+            console.error('Failed to fetch photo:', error);
+            alert('Не вдалося завантажити фото. Спробуйте ще раз пізніше.');
         });
 });
 
