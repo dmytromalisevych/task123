@@ -65,13 +65,21 @@ addPhotoButton.addEventListener('click', () => {
         });
 });
 
+function handleLocalStorage(key, data = null) {
+    if (data) {
+        localStorage.setItem(key, JSON.stringify(data));
+    } else {
+        return JSON.parse(localStorage.getItem(key) || '[]');
+    }
+}
+
 function saveGalleryToLocalStorage() {
     const images = Array.from(gallery.children).map(img => img.src);
-    localStorage.setItem('gallery', JSON.stringify(images));
+    handleLocalStorage('gallery', images);
 }
 
 function loadGalleryFromLocalStorage() {
-    const images = JSON.parse(localStorage.getItem('gallery') || '[]');
+    const images = handleLocalStorage('gallery');
     images.forEach(src => {
         const img = document.createElement('img');
         img.src = src;
