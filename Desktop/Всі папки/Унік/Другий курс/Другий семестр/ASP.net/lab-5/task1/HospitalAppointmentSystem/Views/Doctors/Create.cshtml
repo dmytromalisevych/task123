@@ -1,0 +1,63 @@
+@model Doctor
+@{
+    ViewData["Title"] = "Додати нового лікаря";
+}
+
+<div class="container-fluid">
+    <h2>Додати нового лікаря</h2>
+    <hr/>
+
+    <div class="row">
+        <div class="col-md-8">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                </div>
+            }
+
+            <form asp-controller="Doctors" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="form-group mb-3">
+                    <label asp-for="FirstName">Ім'я</label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="LastName">Прізвище</label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Specialization">Спеціалізація</label>
+                    <input asp-for="Specialization" class="form-control" />
+                    <span asp-validation-for="Specialization" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Зберегти
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('form').on('submit', function () {
+                console.log('Form submitted');
+                return true;
+            });
+        });
+    </script>
+}

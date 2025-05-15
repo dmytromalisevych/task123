@@ -1,0 +1,116 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Реєстрація";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-user-plus me-2"></i>Реєстрація нового користувача
+                </h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FirstName" class="control-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LastName" class="control-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Password" class="control-label"></label>
+                                <input asp-for="Password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ConfirmPassword" class="control-label"></label>
+                                <input asp-for="ConfirmPassword" class="form-control" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="UserType" class="control-label"></label>
+                        <select asp-for="UserType" class="form-select" id="userType">
+                            <option value="">Виберіть тип користувача</option>
+                            <option value="Patient">Пацієнт</option>
+                            <option value="Doctor">Лікар</option>
+                        </select>
+                        <span asp-validation-for="UserType" class="text-danger"></span>
+                    </div>
+
+                    <div id="doctorFields" style="display:none">
+                        <div class="mb-3">
+                            <label asp-for="Specialization" class="control-label"></label>
+                            <input asp-for="Specialization" class="form-control" />
+                            <span asp-validation-for="Specialization" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div id="patientFields" style="display:none">
+                        <div class="mb-3">
+                            <label asp-for="DateOfBirth" class="control-label"></label>
+                            <input asp-for="DateOfBirth" class="form-control" />
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Зареєструватися
+                        </button>
+                        <a asp-action="Login" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Вже маєте акаунт? Увійти
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('#userType').change(function () {
+                if ($(this).val() === 'Doctor') {
+                    $('#doctorFields').show();
+                    $('#patientFields').hide();
+                } else if ($(this).val() === 'Patient') {
+                    $('#doctorFields').hide();
+                    $('#patientFields').show();
+                } else {
+                    $('#doctorFields').hide();
+                    $('#patientFields').hide();
+                }
+            });
+        });
+    </script>
+}

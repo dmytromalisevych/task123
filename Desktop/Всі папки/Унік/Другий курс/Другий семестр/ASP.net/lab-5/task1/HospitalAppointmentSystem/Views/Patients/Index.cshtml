@@ -1,0 +1,134 @@
+@model PatientListViewModel
+@{
+    ViewData["Title"] = "Пацієнти";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>@ViewData["Title"]</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Додати пацієнта
+        </a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" name="searchString" value="@Model.SearchString"
+                               class="form-control" placeholder="Пошук за ім'ям або прізвищем..." />
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter"></i> Фільтрувати
+                    </button>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.SearchString))
+                {
+                    <div class="col-md-2">
+                        <a asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="fas fa-times"></i> Скинути
+                        </a>
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.Patients.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> Пацієнтів не знайдено
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ПІБ</th>
+                        <th>Дата народження</th>
+                        <th>Кількість призначень</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var patient in Model.Patients)
+                    {
+                        <tr>
+                            <td>@patient.FullName</td>
+                            <td>@patient.DateOfBirth.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                @{
+                                    var activeAppointments = patient.Appointments?.Count(a => a.Status == AppointmentStatus.Scheduled) ?? 0;
+                                    var totalAppointments = patient.Appointments?.Count ?? 0;
+                                }
+                                <span class="badge bg-primary">@activeAppointments активних</span>
+                                <span class="badge bg-secondary">@totalAppointments всього</span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="Details" asp-route-id="@patient.PatientId" 
+                                       class="btn btn-sm btn-info" title="Деталі">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@patient.PatientId" 
+                                       class="btn btn-sm btn-warning" title="Редагувати">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    @if (!patient.Appointments?.Any(a => a.Status == AppointmentStatus.Scheduled) ?? true)
+                                    {
+                                        <a asp-action="Delete" asp-route-id="@patient.PatientId"
+                                           class="btn btn-sm btn-danger" title="Видалити">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.PagingInfo.TotalPages > 1)
+        {
+            <div class="d-flex justify-content-center mt-4">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PagingInfo.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = i, searchString = Model.SearchString })">
+                                    @i
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    }
+</div>

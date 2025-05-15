@@ -1,0 +1,66 @@
+@model Doctor
+@{
+    ViewData["Title"] = "Редагування лікаря";
+}
+
+<div class="container-fluid">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="DoctorId" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="FirstName" class="control-label">Ім'я</label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="LastName" class="control-label">Прізвище</label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Specialization" class="control-label">Спеціалізація</label>
+                    <input asp-for="Specialization" class="form-control" />
+                    <span asp-validation-for="Specialization" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Зберегти
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        @if (Model.Appointments != null && Model.Appointments.Any(a => a.Status == AppointmentStatus.Scheduled))
+        {
+            <div class="col-md-4">
+                <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">Увага</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">
+                            У лікаря є активні призначення. 
+                            Будь ласка, переконайтеся, що зміни не вплинуть на заплановані прийоми.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,19 @@
+
+.idea/
+.vscode/
+*.user
+*.suo
+
+# Логи
+*.log
+
+*.nupkg
+*.snupkg
+packages/
+
+.ReSharper/
+*.DotSettings.user
+
+publish/
+bin/
+obj/

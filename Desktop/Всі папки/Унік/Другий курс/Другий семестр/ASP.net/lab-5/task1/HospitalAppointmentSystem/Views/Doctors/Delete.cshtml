@@ -1,0 +1,37 @@
+@model Doctor
+@{
+    ViewData["Title"] = "Видалення лікаря";
+}
+
+<div class="container-fluid">
+    <h2>Підтвердження видалення</h2>
+    <div class="alert alert-danger">
+        <h4>Ви впевнені, що хочете видалити цього лікаря?</h4>
+        <p>Ця дія призведе до видалення всіх пов'язаних призначень.</p>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Інформація про лікаря</h5>
+            <dl class="row">
+                <dt class="col-sm-3">ПІБ</dt>
+                <dd class="col-sm-9">@Model.FullName</dd>
+
+                <dt class="col-sm-3">Спеціалізація</dt>
+                <dd class="col-sm-9">@Model.Specialization</dd>
+            </dl>
+        </div>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="DoctorId" />
+        <div class="form-group">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Видалити
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Скасувати
+            </a>
+        </div>
+    </form>
+</div>

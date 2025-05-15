@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Система запису на прийом до лікаря</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-hospital me-2"></i>Медичний центр
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">
+                            <i class="fas fa-home me-1"></i>Головна
+                        </a>
+                    </li>
+
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        @if (User.IsInRole("Doctor"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Appointments" asp-action="Index">
+                                    <i class="fas fa-calendar-alt me-1"></i>Всі прийоми
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Doctors" asp-action="Index">
+                                    <i class="fas fa-user-md me-1"></i>Лікарі
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Patients" asp-action="Index">
+                                    <i class="fas fa-users me-1"></i>Пацієнти
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="MedicalRecords" asp-action="Index">
+                                    <i class="fas fa-notes-medical me-1"></i>Медичні записи
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Appointments" asp-action="Create">
+                                    <i class="fas fa-calendar-plus me-1"></i>Записатись на прийом
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+                
+                <ul class="navbar-nav">
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <li class="nav-item">
+                            <span class="nav-link text-dark">
+                                <i class="fas @(User.IsInRole("Doctor") ? "fa-user-md" : "fa-user") me-1"></i>
+                                @User.Identity.Name
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">
+                                <i class="fas fa-sign-out-alt me-1"></i>Вийти
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
+                                <i class="fas fa-sign-in-alt me-1"></i>Увійти
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">
+                                <i class="fas fa-user-plus me-1"></i>Зареєструватися
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="border-top footer text-muted bg-light">
+    <div class="container py-3">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Медичний центр</h5>
+                <p>Система запису на прийом до лікаря</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Контакти</h5>
+                <address>
+                    <i class="fas fa-map-marker-alt me-2"></i>вул. Медична, 123<br />
+                    <i class="fas fa-phone me-2"></i>+380 (50) 123-4567<br />
+                    <i class="fas fa-envelope me-2"></i><a href="mailto:info@medcenter.com">info@medcenter.com</a>
+                </address>
+            </div>
+            <div class="col-md-4">
+                <h5>Графік роботи</h5>
+                <p>
+                    <i class="fas fa-clock me-2"></i>Пн-Пт: 8:00 - 20:00<br />
+                    <i class="fas fa-clock me-2"></i>Сб: 9:00 - 18:00<br />
+                    <i class="fas fa-clock me-2"></i>Нд: Вихідний
+                </p>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col text-center">
+                &copy; @DateTime.Now.Year - Медичний центр. Всі права захищено.
+                <a asp-controller="Home" asp-action="Privacy">Політика конфіденційності</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

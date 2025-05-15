@@ -1,0 +1,67 @@
+@model HospitalAppointmentSystem.Models.Appointment
+
+@{
+    ViewData["Title"] = "Видалення призначення";
+}
+
+<div class="container mt-4">
+    <h2>Видалення призначення</h2>
+
+    <div class="alert alert-danger">
+        <h4>Ви впевнені, що хочете видалити це призначення?</h4>
+        <p>Ця дія не може бути скасована.</p>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-danger text-white">
+            Деталі призначення для видалення
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Пацієнт:</dt>
+                <dd class="col-sm-9">@Model.Patient.FullName</dd>
+
+                <dt class="col-sm-3">Лікар:</dt>
+                <dd class="col-sm-9">@Model.Doctor.FullName</dd>
+
+                <dt class="col-sm-3">Дата та час:</dt>
+                <dd class="col-sm-9">@Model.AppointmentDateTime.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                <dt class="col-sm-3">Статус:</dt>
+                <dd class="col-sm-9">
+                    @if (Model.Status == AppointmentStatus.Scheduled)
+                    {
+                        <span class="badge bg-success">Заплановано</span>
+                    }
+                    else if (Model.Status == AppointmentStatus.Completed)
+                    {
+                        <span class="badge bg-info">Завершено</span>
+                    }
+                    else if (Model.Status == AppointmentStatus.Cancelled)
+                    {
+                        <span class="badge bg-danger">Скасовано</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">@Model.Status</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Причина:</dt>
+                <dd class="col-sm-9">@Model.Notes</dd>
+            </dl>
+        </div>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="AppointmentId" />
+        <div class="d-flex">
+            <button type="submit" class="btn btn-danger">
+                <i class="fa fa-trash"></i> Підтвердити видалення
+            </button>
+            <a href="javascript:history.back()" class="btn btn-secondary ms-2">
+                <i class="fa fa-arrow-left"></i> Повернутися назад
+            </a>
+        </div>
+    </form>
+</div>

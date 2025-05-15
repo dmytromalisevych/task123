@@ -1,0 +1,202 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Головна";
+}
+
+<div class="container-fluid">
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <div class="card mb-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-0">
+                        <i class="fas @(User.IsInRole("Doctor") ? "fa-user-md" : "fa-user") me-2"></i>
+                        Вітаємо, @User.Identity.Name!
+                    </h4>
+                </div>
+                @if (!User.IsInRole("Doctor"))
+                {
+                    <div>
+                        <a asp-controller="Appointments" asp-action="Create" class="btn btn-primary">
+                            <i class="fas fa-calendar-plus me-2"></i>Записатись на прийом
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-user-md me-2"></i>Лікарі
+                    </h5>
+                    <h2 class="card-text">@Model.DoctorsCount</h2>
+                    @if (User.IsInRole("Doctor"))
+                    {
+                        <a asp-controller="Doctors" asp-action="Index" class="text-white">Переглянути всіх</a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-users me-2"></i>Пацієнти
+                    </h5>
+                    <h2 class="card-text">@Model.PatientsCount</h2>
+                    @if (User.IsInRole("Doctor"))
+                    {
+                        <a asp-controller="Patients" asp-action="Index" class="text-white">Переглянути всіх</a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-notes-medical me-2"></i>Медичні записи
+                    </h5>
+                    <h2 class="card-text">@Model.MedicalRecordsCount</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-calendar-check me-2"></i>Заплановані прийоми
+                    </h5>
+                    <h2 class="card-text">@Model.ScheduledAppointments</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-secondary text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-clock me-2"></i>Сьогоднішні прийоми
+                    </h5>
+                    <h2 class="card-text">
+                        @Model.UpcomingAppointments.Count(a => a.AppointmentDateTime.Date == DateTime.Today)
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-calculator me-2"></i>Всього прийомів
+                    </h5>
+                    <h2 class="card-text">@Model.TotalAppointments</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-calendar-day me-2"></i>
+                    @if (User.IsInRole("Doctor"))
+                    {
+                        <span>Розклад прийомів на сьогодні</span>
+                    }
+                    else
+                    {
+                        <span>Мої записи на сьогодні</span>
+                    }
+                </h5>
+            </div>
+            <div class="card-body">
+                @{
+                    var todayAppointments = Model.UpcomingAppointments
+                        .Where(a => a.AppointmentDateTime.Date == DateTime.Today)
+                        .OrderBy(a => a.AppointmentDateTime);
+                }
+
+                @if (!todayAppointments.Any())
+                {
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>На сьогодні немає запланованих прийомів
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Час</th>
+                                    @if (User.IsInRole("Doctor"))
+                                    {
+                                        <th>Пацієнт</th>
+                                    }
+                                    else
+                                    {
+                                        <th>Лікар</th>
+                                        <th>Спеціалізація</th>
+                                    }
+                                    <th>Статус</th>
+                                    <th>Дії</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var appointment in todayAppointments)
+                                {
+                                    <tr>
+                                        <td>@appointment.AppointmentDateTime.ToString("HH:mm")</td>
+                                        @if (User.IsInRole("Doctor"))
+                                        {
+                                            <td>@appointment.Patient.FullName</td>
+                                        }
+                                        else
+                                        {
+                                            <td>@appointment.Doctor.FullName</td>
+                                            <td>@appointment.Doctor.Specialization</td>
+                                        }
+                                        <td>
+                                            <span class="badge bg-@(appointment.Status == AppointmentStatus.Scheduled ? "primary" :
+                                                                  appointment.Status == AppointmentStatus.Completed ? "success" :
+                                                                  "danger")">
+                                                @appointment.Status
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if (User.IsInRole("Doctor"))
+                                            {
+                                                <a asp-controller="MedicalRecords" asp-action="Create" 
+                                                   asp-route-appointmentId="@appointment.AppointmentId"
+                                                   class="btn btn-sm btn-success">
+                                                    <i class="fas fa-plus-circle"></i> Створити запис
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-controller="Appointments" asp-action="Cancel" 
+                                                   asp-route-id="@appointment.AppointmentId"
+                                                   class="btn btn-sm btn-danger"
+                                                   onclick="return confirm('Ви впевнені, що хочете скасувати прийом?')">
+                                                    <i class="fas fa-times-circle"></i> Скасувати
+                                                </a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

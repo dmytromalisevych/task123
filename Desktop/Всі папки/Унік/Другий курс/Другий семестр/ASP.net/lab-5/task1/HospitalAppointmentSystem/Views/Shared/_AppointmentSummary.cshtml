@@ -1,0 +1,33 @@
+@model Doctor
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">
+            <i class="fas fa-user-md me-2"></i>@Model.FirstName @Model.LastName
+        </h5>
+        <p class="card-text">
+            <strong><i class="fas fa-stethoscope me-2"></i>Спеціалізація:</strong> @Model.Specialization
+        </p>
+        <div class="btn-group">
+            <a asp-controller="Appointments" asp-action="Create" asp-route-doctorId="@Model.DoctorId"
+               class="btn btn-primary btn-sm" title="Записатися на прийом">
+                <i class="fas fa-calendar-plus me-1"></i>Записатися
+            </a>
+            <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId"
+               class="btn btn-info btn-sm" title="Деталі">
+                <i class="fas fa-info-circle"></i>
+            </a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Doctors" asp-action="Edit" asp-route-id="@Model.DoctorId"
+                   class="btn btn-warning btn-sm" title="Редагувати">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a asp-controller="Doctors" asp-action="Delete" asp-route-id="@Model.DoctorId"
+                   class="btn btn-danger btn-sm" title="Видалити">
+                    <i class="fas fa-trash"></i>
+                </a>
+            }
+        </div>
+    </div>
+</div>

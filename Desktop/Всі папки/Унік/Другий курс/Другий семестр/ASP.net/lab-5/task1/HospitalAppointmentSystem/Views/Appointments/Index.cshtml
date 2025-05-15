@@ -1,0 +1,94 @@
+@model AppointmentListViewModel
+@{
+    ViewData["Title"] = "Призначення";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>@ViewData["Title"]</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Створити призначення
+        </a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" name="searchString" value="@Model.SearchString"
+                               class="form-control" placeholder="Пошук..." />
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="">Всі статуси</option>
+                        <option value="Scheduled" selected="@(Model.CurrentStatus == "Заплановані")">
+                            Заплановані
+                        </option>
+                        <option value="Completed" selected="@(Model.CurrentStatus == "Завершений")">
+                            Завершені
+                        </option>
+                        <option value="Cancelled" selected="@(Model.CurrentStatus == "Скасований")">
+                            Скасовані
+                        </option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!Model.Appointments.Any())
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> Призначень не знайдено
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Дата та час</th>
+                        <th>Пацієнт</th>
+                        <th>Лікар</th>
+                        <th>Статус</th>
+                        <th>Нотатки</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var appointment in Model.Appointments)
+                    {
+                        <tr>
+                            <td>@appointment.AppointmentDateTime.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@appointment.Patient.FullName</td>
+                            <td>@appointment.Doctor.FullName</td>
+                            <td>
+                                <span class="badge bg-@(appointment.Status == AppointmentStatus.Scheduled ? "primary" : 
+                                                    appointment.Status == AppointmentStatus.Completed ? "success" : 
+                                                    "danger")">
+                                    @appointment.Status
+                                </span>
+                            </td>
+                            <td>@appointment.Notes</td>
+                            <td>
+                                <form asp-action="Delete" asp-route-id="@appointment.AppointmentId" 
+                                      onsubmit="return confirm('Ви впевнені, що хочете видалити це призначення?');"
+                                      style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

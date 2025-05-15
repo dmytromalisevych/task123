@@ -1,0 +1,77 @@
+@model Patient
+@{
+    ViewData["Title"] = "Деталі пацієнта";
+}
+
+<div class="container-fluid">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Особиста інформація</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">ПІБ</dt>
+                        <dd class="col-sm-8">@Model.FullName</dd>
+
+                        <dt class="col-sm-4">Дата народження</dt>
+                        <dd class="col-sm-8">@Model.DateOfBirth.ToString("dd.MM.yyyy")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.ActiveAppointments != null && ViewBag.ActiveAppointments.Count > 0)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Активні призначення</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Дата та час</th>
+                                        <th>Лікар</th>
+                                        <th>Нотатки</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var appointment in ViewBag.ActiveAppointments)
+                                    {
+                                        <tr>
+                                            <td>@appointment.AppointmentDateTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                            <td>@appointment.Doctor.FullName</td>
+                                            <td>@appointment.Notes</td>
+                                            <td>
+                                                <span class="badge bg-primary">@appointment.Status</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.PatientId" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Редагувати
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Назад
+        </a>
+    </div>
+</div>

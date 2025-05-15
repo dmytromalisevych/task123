@@ -1,0 +1,84 @@
+@model Doctor
+@{
+    ViewData["Title"] = "Інформація про лікаря";
+}
+
+<div class="container-fluid">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Основна інформація</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">ПІБ</dt>
+                        <dd class="col-sm-8">@Model.FullName</dd>
+
+                        <dt class="col-sm-4">Спеціалізація</dt>
+                        <dd class="col-sm-8">@Model.Specialization</dd>
+
+                        @if (Model.Appointments != null)
+                        {
+                            <dt class="col-sm-4">Загальна кількість призначень</dt>
+                            <dd class="col-sm-8">@Model.Appointments.Count</dd>
+
+                            <dt class="col-sm-4">Активні призначення</dt>
+                            <dd class="col-sm-8">@Model.Appointments.Count(a => a.Status == AppointmentStatus.Scheduled)</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Найближчі призначення</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.ActiveAppointments != null && ViewBag.ActiveAppointments.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Дата</th>
+                                        <th>Час</th>
+                                        <th>Пацієнт</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var appointment in ViewBag.ActiveAppointments)
+                                    {
+                                        <tr>
+                                            <td>@appointment.AppointmentDateTime.ToString("dd.MM.yyyy")</td>
+                                            <td>@appointment.AppointmentDateTime.ToString("HH:mm")</td>
+                                            <td>@appointment.Patient.FullName</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">Немає активних призначень</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.DoctorId" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Редагувати
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Назад
+        </a>
+    </div>
+</div>
